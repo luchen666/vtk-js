@@ -23,6 +23,7 @@ module.exports = {
     // Not for us
     'jsx-a11y/label-has-for': 0,
     'no-console': 0,
+    'no-debugger': 0,
     'no-plusplus': 0,
     'no-underscore-dangle': 0,
     'import/no-named-as-default': 0,
@@ -32,6 +33,7 @@ module.exports = {
     // and no time to fix them...
     // [...]
     'linebreak-style': 0,
+    "no-unused-vars": "off"
   },
   plugins: ['prettier'],
   globals: {
