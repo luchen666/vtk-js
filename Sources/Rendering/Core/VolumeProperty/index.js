@@ -211,6 +211,7 @@ function vtkVolumeProperty(publicAPI, model) {
     'gradientOpacityMaximumValue',
     'gradientOpacityMaximumOpacity',
     'opacityMode',
+    'forceNearestInterpolation',
   ];
   sets.forEach((val) => {
     const cap = macro.capitalize(val);
@@ -232,6 +233,7 @@ function vtkVolumeProperty(publicAPI, model) {
     'gradientOpacityMaximumValue',
     'gradientOpacityMaximumOpacity',
     'opacityMode',
+    'forceNearestInterpolation',
   ];
   gets.forEach((val) => {
     const cap = macro.capitalize(val);
@@ -244,6 +246,7 @@ function vtkVolumeProperty(publicAPI, model) {
 // ----------------------------------------------------------------------------
 
 const DEFAULT_VALUES = {
+  colorMixPreset: null,
   independentComponents: true,
   interpolationType: InterpolationType.FAST_LINEAR,
   shade: false,
@@ -282,11 +285,13 @@ export function extend(publicAPI, model, initialValues = {}) {
         useGradientOpacity: false,
 
         componentWeight: 1.0,
+        forceNearestInterpolation: false,
       });
     }
   }
 
   macro.setGet(publicAPI, model, [
+    'colorMixPreset',
     'independentComponents',
     'interpolationType',
     'shade',

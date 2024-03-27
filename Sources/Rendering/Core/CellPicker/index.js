@@ -172,7 +172,7 @@ function vtkCellPicker(publicAPI, model) {
     return pickResult;
   };
 
-  publicAPI.intersectWithLine = (p1, p2, tol, actor, mapper) => {
+  model.intersectWithLine = (p1, p2, tolerance, prop, mapper) => {
     let tMin = Number.MAX_VALUE;
     let t1 = 0.0;
     let t2 = 1.0;
@@ -201,7 +201,7 @@ function vtkCellPicker(publicAPI, model) {
     } else if (mapper.isA('vtkVolumeMapper')) {
       // we calculate here the parametric intercept points between the ray and the bounding box, so
       // if the application defines for some reason a too large ray length (1e6), it restrict the calculation
-      // to the vtkVolume actor bounding box
+      // to the vtkVolume prop bounding box
       const interceptionObject = vtkBox.intersectWithLine(
         mapper.getBounds(),
         p1,
@@ -217,9 +217,9 @@ function vtkCellPicker(publicAPI, model) {
           ? interceptionObject.t2
           : clipLine.t2;
 
-      tMin = publicAPI.intersectVolumeWithLine(p1, p2, t1, t2, tol, actor);
+      tMin = model.intersectVolumeWithLine(p1, p2, t1, t2, tolerance, prop);
     } else if (mapper.isA('vtkMapper')) {
-      tMin = publicAPI.intersectActorWithLine(p1, p2, t1, t2, tol, mapper);
+      tMin = model.intersectActorWithLine(p1, p2, t1, t2, tolerance, mapper);
     }
 
     if (tMin < model.globalTMin) {
@@ -266,7 +266,7 @@ function vtkCellPicker(publicAPI, model) {
     return tMin;
   };
 
-  publicAPI.intersectVolumeWithLine = (p1, p2, t1, t2, tol, volume) => {
+  model.intersectVolumeWithLine = (p1, p2, t1, t2, tolerance, volume) => {
     let tMin = Number.MAX_VALUE;
     const mapper = volume.getMapper();
     const imageData = mapper.getInputData();
@@ -388,7 +388,7 @@ function vtkCellPicker(publicAPI, model) {
     return tMin;
   };
 
-  publicAPI.intersectActorWithLine = (p1, p2, t1, t2, tol, mapper) => {
+  model.intersectActorWithLine = (p1, p2, t1, t2, tolerance, mapper) => {
     let tMin = Number.MAX_VALUE;
     const minXYZ = [0, 0, 0];
     let pDistMin = Number.MAX_VALUE;
@@ -460,15 +460,15 @@ function vtkCellPicker(publicAPI, model) {
               t2,
               p1,
               p2,
-              tol,
+              tolerance,
               x,
               pCoords
             );
           } else {
-            cellPicked = cell.intersectWithLine(p1, p2, tol, x, pCoords);
+            cellPicked = cell.intersectWithLine(p1, p2, tolerance, x, pCoords);
           }
         } else {
-          cellPicked = cell.intersectWithLine(q1, q2, tol, x, pCoords);
+          cellPicked = cell.intersectWithLine(q1, q2, tolerance, x, pCoords);
           if (t1 !== 0.0 || t2 !== 1.0) {
             cellPicked.t = t1 * (1.0 - cellPicked.t) + t2 * cellPicked.t;
           }

@@ -1,7 +1,8 @@
 import vtkPiecewiseFunction from "../../../Common/DataModel/PiecewiseFunction";
 import { vtkObject } from "../../../interfaces";
+import { Nullable } from "../../../types";
 import vtkColorTransferFunction from "../ColorTransferFunction";
-import { InterpolationType, OpacityMode } from "./Constants";
+import { ColorMixPreset, InterpolationType, OpacityMode } from "./Constants";
 
 export interface IVolumePropertyInitialValues  {
 	independentComponents?: boolean;
@@ -69,6 +70,11 @@ export interface vtkVolumeProperty extends vtkObject {
 	getGradientOpacityMinimumValue(index: number): number;
 
 	/**
+	 * 
+	 */
+	getColorMixPreset(): Nullable<ColorMixPreset>;
+
+	/**
 	 *
 	 */
 	getIndependentComponents(): boolean;
@@ -130,6 +136,12 @@ export interface vtkVolumeProperty extends vtkObject {
 	getUseGradientOpacity(index: number): boolean;
 
 	/**
+	 * @see setForceNearestInterpolation
+	 * @param {Number} index
+	 */
+	getForceNearestInterpolation(index: number): boolean;
+
+	/**
 	 *
 	 */
 	getUseLabelOutline(): boolean;
@@ -180,6 +192,20 @@ export interface vtkVolumeProperty extends vtkObject {
 	 * @param {vtkPiecewiseFunction} func 
 	 */
 	setGrayTransferFunction(index: number, func: vtkPiecewiseFunction): boolean;
+
+	/**
+	 * Set the color mix code to a preset value
+	 * Set to null to use no preset
+	 * See the test `testColorMix` for an example on how to use this preset.
+	 *
+	 * If set to `CUSTOM`, a tag `//VTK::CustomColorMix` is made available to the
+	 * user who can user shader replacements to put its own code. The given code
+	 * will be used to mix the colors from each component.
+	 * Each component is available as a rgba vec4: `comp0`, `comp1`...
+	 * There are other useful functions or variable available. To find them,
+	 * see `//VTK::CustomComponentsColorMix::Impl` tag in `vtkVolumeFS.glsl`.
+	 */
+	setColorMixPreset(preset: Nullable<ColorMixPreset>): boolean;
 
 	/**
 	 * Does the data have independent components, or do some define color only?
@@ -279,14 +305,14 @@ export interface vtkVolumeProperty extends vtkObject {
 	 * @param {Number} index 
 	 * @param {vtkColorTransferFunction} func 
 	 */
-	setRGBTransferFunction(index: number, func: vtkColorTransferFunction): boolean;
+	setRGBTransferFunction(index: number, func?: Nullable<vtkColorTransferFunction>): boolean;
 
 	/**
 	 * Set the scalar opacity of a volume to a transfer function
 	 * @param {Number} index 
 	 * @param {vtkPiecewiseFunction} func 
 	 */
-	setScalarOpacity(index: number, func: vtkPiecewiseFunction): boolean;
+	setScalarOpacity(index: number, func?: Nullable<vtkPiecewiseFunction>): boolean;
 
 	/**
 	 * Set the scalar component weights.
@@ -294,6 +320,15 @@ export interface vtkVolumeProperty extends vtkObject {
 	 * @param {Number} value 
 	 */
 	setComponentWeight(index: number, value: number): boolean;
+
+	/**
+	 * Force the nearest neighbor interpolation of one or more of the components
+	 * The interpolation for the rest of the volume is set using `setInterpolationType`
+	 * @see setInterpolationType
+	 * @param {Number} index
+	 * @param {Boolean} value
+	 */
+	setForceNearestInterpolation(index: number, value: boolean): boolean;
 
 	/**
 	 * Get the scalar component weights.
